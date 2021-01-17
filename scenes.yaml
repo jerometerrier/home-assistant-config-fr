@@ -1,0 +1,30 @@
+- id: '1606055341994'
+  name: Ampli Spotify
+  entities:
+    media_player.htr_4069_db8ef2_main:
+      source_list:
+      - airplay
+      - audio1
+      - audio2
+      - aux
+      - av1
+      - av2
+      - av3
+      - av4
+      - bluetooth
+      - hdmi1
+      - hdmi2
+      - hdmi3
+      - hdmi4
+      - juke
+      - mc_link
+      - net_radio
+      - qobuz
+      - server
+      - spotify
+      - tuner
+      - usb
+      friendly_name: HTR-4069 DB8EF2 (main)
+      supported_features: 22973
+      state: 'off'
+  icon: mdi:spotify

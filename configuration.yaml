@@ -1,0 +1,234 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+
+logger:
+  default: info
+  logs:
+    homeassistant.components.mysensors: info
+    mysensors: info
+    homeassistant.components.automation: info
+
+recorder:
+  auto_purge: true
+  purge_keep_days: 10
+    
+    
+http:
+  use_x_forwarded_for: True
+  trusted_proxies: !secret IP_bastion
+
+homeassistant:
+  customize: !include customize.yaml
+  packages: !include_dir_named packages
+
+# Text to speech
+tts:
+  - platform: google_translate
+    language: 'fr'
+    cache: true
+    cache_dir: /tmp/tts
+    time_memory: 300
+    service_name: google_say
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml
+
+
+#zwave:
+  #usb_path: '/dev/ttyAMA0'
+  #device_config: !include zwave_device_config.yaml
+
+mysensors:
+  gateways:
+    - device: '/dev/ttyACM0'
+      persistence_file: 'mysensors.json'
+      baud_rate: 115200
+      nodes:
+        2:
+          name: "Portillon"
+        3:
+          name: "Portail"
+        4:
+          name: "Portail Partiel"
+        5:
+          name: "Garage"
+        6:
+          name: 'Pos_Portail'
+  optimistic: false
+  persistence: true
+  retain: true
+  version: 2.3
+
+switch:
+  - platform: template
+    switches:
+      arduino_portail_total:
+        friendly_name: portail
+        value_template: "{{ is_state('switch.portail_garage_0_6', 'on') }}"
+        #capteur arduino à 1 quand fermé, 0 quand ouvert
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.portail_garage_0_3
+        turn_off:
+          service: switch.turn_on
+          data:
+            entity_id: switch.portail_garage_0_3
+        icon_template: >-
+          {% if is_state('switch.portail_garage_0_6', 'on') %}
+            mdi:gate
+          {% else %}
+            mdi:gate-open
+          {% endif %}
+      arduino_garage:
+        friendly_name: garage
+        value_template: "{{ is_state('binary_sensor.door_window_sensor_158d0001ab37f9', 'off') }}"
+        # capteur xiaomi à 0 quand fermé, 1 quand ouvert
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.portail_garage_0_5
+        turn_off:
+          service: switch.turn_on
+          data:
+            entity_id: switch.portail_garage_0_5
+        icon_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001ab37f9', 'off') %}
+            mdi:garage
+          {% else %}
+            mdi:garage-open
+          {% endif %}
+
+media_player:
+  - platform: yamaha_musiccast
+    host: !secret IP_yamaha_musiccast
+  - platform: androidtv
+    host: !secret IP_androidtv
+    name: "MiBox"
+    device_class: androidtv
+    apps:
+      com.netflix.ninja: "Netflix"
+      tv.molotov.app: "Molotov"
+      
+
+vacuum:
+  - platform: xiaomi_miio
+    host: !secret IP_xiaomi_miio
+    token: !secret xiaomi_vacuum_token
+    name: Aspirateur_Robot
+
+
+
+xiaomi_aqara:
+  discovery_retry: 5
+  gateways:
+    - key: !secret xiaomi_gateway_key
+
+spotify:
+  client_id: !secret spotify_client_id
+  client_secret: !secret spotify_client_secret
+  
+octoprint:
+  - host: !secret IP_octoprint
+    port: 5000
+    api_key: !secret octoprint_api_key
+    name: Dagoma Discovery 200
+    number_of_tools: 1
+    sensors:
+      monitored_conditions:
+        - 'Current State'
+        - 'Temperatures'
+        - 'Job Percentage'
+        - 'Time Elapsed'
+        - 'Time Remaining'
+    #binary_sensors:
+    #  monitored_conditions:
+    #    - 'Printing'
+    #    - 'Printing Error'
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api_key
+    allowed_chat_ids:
+      - !secret telegram_jerome_id
+      - !secret telegram_elise_id
+      
+notify:
+  - name: telegram_jerome
+    platform: telegram
+    chat_id: !secret telegram_jerome_id
+  - name: telegram_elise
+    platform: telegram
+    chat_id: !secret telegram_elise_id
+  - name: telegram_all
+    platform: group
+    services:
+      - service: telegram_jerome
+      - service: telegram_elise
+
+huawei_lte:
+  - url: !secret HuaweiURL
+    password: !secret HuaweiPassword
+
+tplink_lte:
+  - host: !secret TPLinkURL
+    password: !secret TPlinkPassword
+    
+#android_ip_webcam:
+  #- host: !secret android_lg_g2
+  #  port: 8000
+  #  name: android_lg_g2
+  #  sensors:
+  #    - battery_level
+  #    - battery_temp
+  #    - battery_voltage
+  #    - light
+  #    - motion
+  #    - proximity
+  #  switches:
+  #    - ffc
+  #    - night_vision
+  #    - focus
+  #    - torch
+  #- host: !secret android_htc
+  #  port: 8080
+  #  name: android_htc
+
+influxdb:
+  host: a0d7b954-influxdb
+  port: 8086
+  database: !secret influxdb_database
+  username: !secret influxdb_username
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+
+#panel_iframe:
+  # router:
+  #   title: 'Octoprint'
+  #   url: 'http://192.168.1.***:5000'
+  #   icon: 'mdi:printer-3d'
+    
+pi_hole:
+  - host: !secret pihole_hebergnity_ip
+    name: PiHole Hebergnity
+  - host: !secret pihole_ip
+    name: PiHole
+    api_key: !secret pihole_api
+
+
+#image_processing:
+#  - platform: opencv
+#    source:
+#      - entity_id: camera.camera_interieure_profile000_mainstream
+#    classifier:
+#      mom: /config/OpenCV/haarcascade_fullbody.xml
+

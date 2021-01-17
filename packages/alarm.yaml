@@ -1,0 +1,156 @@
+#-----------------------------------
+# Gestion Systeme Alarme
+#-----------------------------------
+alarm_control_panel:
+  - platform: manual
+    name: Home Alarm
+    code: !secret ALARM_code
+    arming_time: 5
+    delay_time: 5
+    trigger_time: 120
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      arming_time: 0
+      delay_time: 60
+      
+group:
+  capteurs_ouvertures:
+    name: capteurs_ouvertures
+    entities:
+      - binary_sensor.door_window_sensor_158d0001ab37f9 #porte garage
+      - binary_sensor.door_window_sensor_158d0001b146a0 #fenêre bureau
+      - binary_sensor.door_window_sensor_158d0001ab6db9 #fenetre chambre louis
+      - binary_sensor.door_window_sensor_158d0001dad2f6 # fenêtre chambre sofia
+      - binary_sensor.door_window_sensor_158d0001ab235b # fenetre chambre parents
+
+  capteurs_mouvements:
+    name: capteurs_mouvements
+    entities:
+      - binary_sensor.motion_sensor_158d00016c3bc5 #détecteur mouvement salon
+      - binary_sensor.motion_sensor_158d0001a24ee1 #détecteur mouvement couloir
+      
+automation:
+  - alias: 'Send notification when alarm triggered'
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.home_alarm
+        to: 'triggered'
+    action:
+      - service: notify.notify
+        data:
+          message: "The alarm has been triggered"
+          title: "ALARME"
+      - service: notify.telegram_all
+        data:
+          message: "The alarm has been triggered"
+          title: "ALARME"
+      - service: telegram_bot.send_photo
+        data:
+          caption: Sud
+          disable_notification: true
+          target:
+            - !secret telegram_jerome_id
+            - !secret telegram_elise_id
+          timeout: 1000
+          url: !secret reolink_sud_snap
+          verify_ssl: false
+      - service: telegram_bot.send_photo
+        data:
+          caption: Nord
+          disable_notification: true
+          target:
+            - !secret telegram_jerome_id
+            - !secret telegram_elise_id
+          timeout: 1000
+          url: !secret reolink_nord_snap
+          verify_ssl: false
+      - service: telegram_bot.send_photo
+        data:
+          caption: Nord
+          disable_notification: true
+          target:
+            - !secret telegram_jerome_id
+            - !secret telegram_elise_id
+          timeout: 1000
+          url: !secret reolink_interieur_snap
+          verify_ssl: false
+
+    mode: single
+  - alias: 'Send notification when alarm Activated'
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.home_alarm
+        to: 'armed_away'
+    action:
+      - service: notify.notify
+        data:
+          message: "The alarm has been activated"
+          title: "Alarm"
+      - service: script.flash_light
+        data:
+          light: gateway_light_7811dcb06280
+          count: 10
+          color: blue
+          brightness: 100
+          delay: 1
+
+  - alias: 'Trigger alarm while armed away'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001ab235b
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001ab6db9
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001b146a0
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001dad2f6
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001b146a0
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.motion_sensor_158d00016c3bc5
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.motion_sensor_158d0001a24ee1
+        to: 'on'
+
+    condition:
+      - condition: state
+        entity_id: alarm_control_panel.home_alarm
+        state: armed_away
+    action:
+      service: alarm_control_panel.alarm_trigger
+      entity_id: alarm_control_panel.home_alarm
+
+  - alias: 'Trigger alarm while armed home'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001ab235b
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001ab6db9
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001b146a0
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001dad2f6
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: alarm_control_panel.home_alarm
+        state: armed_home
+    action:
+      service: alarm_control_panel.alarm_trigger
+      entity_id: alarm_control_panel.home_alarm

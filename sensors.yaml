@@ -1,0 +1,45 @@
+#####################
+## Xiaomi MI FLora ##
+#####################
+
+  - platform: miflora
+    mac: !secret MAC_miflora
+
+########################
+## Gestion aspirateur ##
+########################
+
+  - platform: mqtt
+    name: "test camera motion"
+    state_topic: "CAM_SUD"
+
+
+  - platform: template
+    sensors:
+      vacuum_battery:
+        unit_of_measurement: '%'
+        value_template: "{{ state_attr('vacuum.aspirateur_robot', 'battery_level') }}"
+        icon_template: mdi:battery
+        device_class: battery
+      vacuum_status:
+        value_template: "{{ states.vacuum.aspirateur_robot.attributes.status }}"
+      vacuum_main_brush:
+        value_template: '{{ states.vacuum.aspirateur_robot.attributes.main_brush_left }}'
+        unit_of_measurement: 'h'
+      vacuum_side_brush:
+        value_template: '{{ states.vacuum.aspirateur_robot.attributes.side_brush_left }}'
+        unit_of_measurement: 'h'
+      vacuum_filter:
+        value_template: '{{ states.vacuum.aspirateur_robot.attributes.filter_left }}'
+        unit_of_measurement: 'h'
+      vacuum_sensor:
+        value_template: '{{ states.vacuum.aspirateur_robot.attributes.sensor_dirty_left }}'
+        unit_of_measurement: 'h'
+      vacuum_fan_speed:
+        value_template: '{{ states.vacuum.aspirateur_robot.attributes.fan_speed }}'
+        unit_of_measurement: '%'
+#      vacuum_last_trash:
+#        value_template: 0
+#        unit_of_measurement: 'h'
+
+

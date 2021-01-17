@@ -1,0 +1,130 @@
+sensor:
+  - platform: rest
+    name: Pollens
+    resource: https://www.pollens.fr/risks/thea/counties/71
+    json_attributes: 
+      - risks
+    value_template: '{{ value_json.riskLevel }}'
+    # Request every 12 hours 
+    scan_interval: 43200
+  - platform: template
+    sensors:
+      pollen_tilleul:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[0].level}}"
+        friendly_name: Tilleul
+      pollen_ambroisies:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[1].level}}"
+        friendly_name: Ambroisies
+      pollen_olivier:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[2].level}}"
+        friendly_name: Olivier
+      pollen_plantain:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[3].level}}"
+        friendly_name: Plantain
+      pollen_noisetier:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[4].level}}"
+        friendly_name: Noisetier
+      pollen_aulne:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[5].level}}"
+        friendly_name: Aulne
+      pollen_armoise:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[6].level}}"
+        friendly_name: Armoise
+      pollen_chataignier:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[7].level}}"
+        friendly_name: Châtaignier
+      pollen_urticacees:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[8].level}}"
+        friendly_name: Urticacées
+      pollen_oseille:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[9].level}}"
+        friendly_name: Oseille
+      pollen_graminees:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[10].level}}"
+        friendly_name: Graminées
+      pollen_chene:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[11].level}}"
+        friendly_name: Chêne
+      pollen_bouleau:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[13].level}}"
+        friendly_name: Bouleau
+      pollen_charme:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[14].level}}"
+        friendly_name: Charme
+      pollen_peuplier:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[15].level}}"
+        friendly_name: Peuplier
+      pollen_frene:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[16].level}}"
+        friendly_name: Frêne
+      pollen_saule:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[17].level}}"
+        friendly_name: Saule
+      pollen_cypres:
+        value_template: "{{state_attr('sensor.pollens', 'risks')[18].level}}"
+        friendly_name: Cyprès
+
+
+timer:
+  gouttes:
+    duration: '00:02:00'
+
+
+automation:
+  - alias : 'GOUTTES_activation_automation_gouttes'
+    trigger:
+      - platform: time_pattern
+        hours: "6"
+        minutes: "0"
+    action: 
+      - service: automation.turn_on
+        entity_id: automation.gouttes_message_gouttes_toutes_les_5_minutes
+  - alias: 'GOUTTES_Message_gouttes_toutes_les_5_minutes'
+    trigger:
+      - platform: time_pattern
+        minutes: /5
+    action:
+      - service: telegram_bot.send_message
+        data:
+          target: 
+            - !secret telegram_jerome_id
+            - !secret telegram_elise_id
+          message: "N'oublie pas de prendre tes gouttes"
+          inline_keyboard:
+            - "Je prends mes gouttes:/ok_gouttes"
+
+  - alias: 'GOUTTES_Acquittement prises de gouttes + Lancement Chrono'
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        command: '/ok_gouttes'
+    action:
+      - service: telegram_bot.edit_replymarkup
+        data:
+          message_id: 'last'
+          chat_id: '{{ trigger.event.data.chat_id }}'
+          inline_keyboard: []
+      - service: telegram_bot.send_message
+        data:
+          target: 
+            - !secret telegram_jerome_id
+            - !secret telegram_elise_id
+          message: "Lancement du timer : 2min"
+      - service: timer.start
+        entity_id: timer.gouttes
+      - service: automation.turn_off
+        entity_id: automation.GOUTTES_Message_gouttes_toutes_les_5_minutes
+  - alias: 'GOUTTES_Fin chrono gouttes'
+    trigger:
+    - platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.gouttes
+    action:
+      - service: telegram_bot.send_message
+        data:
+          target: 
+            - !secret telegram_jerome_id
+            - !secret telegram_elise_id
+          message: 'Temps écoulé'

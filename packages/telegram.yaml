@@ -1,0 +1,138 @@
+telegram_bot:
+  - platform: webhooks
+    api_key: !secret telegram_api_key
+    allowed_chat_ids:
+      - !secret telegram_jerome_id
+      - !secret telegram_elise_id
+
+notify:
+  - name: telegram_jerome
+    platform: telegram
+    chat_id: !secret telegram_jerome_id
+  - name: telegram_elise
+    platform: telegram
+    chat_id: !secret telegram_elise_id
+  - name: telegram_all
+    platform: group
+    services:
+      - service: telegram_jerome
+      - service: telegram_elise
+
+automation:
+  - alias: 'Telegram bot that reply pong to ping'
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        command: '/ping'
+    action:
+    - service: telegram_bot.answer_callback_query
+      data:
+        callback_query_id: '{{ trigger.event.data.id }}'
+        message: 'Pong'
+  - alias: 'Telegram bot start application'       
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/start'
+    action:
+      - service: telegram_bot.send_message
+        data:
+          target: '{{ trigger.event.data.chat_id }}'
+          message: 'Bienvenue dans HomeAssistant'
+          inline_keyboard:
+            - "Ping:/ping, Don't:/do_nothing"
+            - "Remove this button:/remove_button"
+            - "Message retour maison:/back_to_home"
+  - alias: 'Telegram bot that simply acknowledges'
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        command: '/do_nothing'
+    action:
+      - service: telegram_bot.answer_callback_query
+        data:
+          callback_query_id: '{{ trigger.event.data.id }}'
+          message: 'OK, you said no!'
+  - alias: 'Telegram bot that edits the keyboard'
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        command: '/remove_button'
+    action:
+      - service: telegram_bot.answer_callback_query
+        data:
+          callback_query_id: '{{ trigger.event.data.id }}'
+          message: 'Callback received for editing the inline keyboard!'
+      - service: telegram_bot.edit_replymarkup
+        data:
+          message_id: 'last'
+          chat_id: '{{ trigger.event.data.chat_id }}'
+          inline_keyboard:
+            - "Edit message:/edit_msg, Don't:/do_nothing"
+  - alias: 'Retour maison'
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        command: '/back_to_home'
+    action:
+      - service: telegram_bot.edit_message
+        data:
+          message_id: 'last'
+          chat_id: '{{ trigger.event.data.chat_id }}'
+          message: 'Dans combien de minutes sera tu rentrés ?'
+          inline_keyboard:
+            - "5:/back_to_home_timer 5,10:/back_to_home_timer 10,15:/back_to_home_timer 15,20:/back_to_home_timer 20,25:/back_to_home_timer 25,30:/back_to_home_timer 30"
+            - "Annuler:/Annuler"
+  - alias: 'Message avec duree retour maison'
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        command: '/back_to_home_timer'
+    action:
+      - service: telegram_bot.edit_message
+        data:
+          message_id: 'last'
+          chat_id: '{{ trigger.event.data.chat_id }}'
+          #show_alert: true
+          callback_query_id: '{{ trigger.event.data.id }}'
+          message: 'Durée: {{trigger.event.data["args"]}}'
+      - service: telegram_bot.send_message
+        data_template:
+          target: 
+            - !secret telegram_jerome_id
+            - !secret telegram_elise_id
+          message: >
+            {% set offset = (trigger.event.data["args"][0] | int)%}
+            {% set heure_arrivee = (now() + timedelta( minutes = offset)).strftime('%H:%M') %}
+            Jérôme arrivera à {{heure_arrivee}}
+      - delay: '{{trigger.event.data["args"][0] | int}}'
+      - service: script.turn_on
+        entity_id: script.ouverture_portail_si_ferme
+        
+  - alias: 'Telegram Annuler'
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        command: '/Annuler'
+    action:
+      - service: telegram_bot.delete_message
+        data:
+          message_id: 'last'
+          chat_id: '{{ trigger.event.data.chat_id }}'
+
+script:
+  ouverture_portail_si_ferme:
+    alias: Ouverture portail si ferme
+    sequence:
+    - service : switch.toggle
+      data: 
+        entity_id: 'switch.arduino_portail_total'
+        condition: template
+        value_template: "{{ is_state('switch.arduino_portail_total', 'on' }}"

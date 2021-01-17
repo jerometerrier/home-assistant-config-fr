@@ -1,0 +1,185 @@
+#-----------------------------------
+# Intégration camera REOLINK
+#-----------------------------------
+# camera:
+# - platform: reolink_dev
+#   host: !secret reolink_sud_ip
+#   username: admin
+#   password: !secret reolink_sud_password
+#   name: reolink_sud #(optional, default Reolink Camera)
+#   stream: sub #main or sub (optional, default main)
+#   protocol: rtmp #rtmp or rtsp (optional, default rtmp)
+#   channel: 0 #NVR camera channel (optional, default 0)
+#   scan_interval: 30 #5 (optional, default 30s)
+# - platform: reolink_dev
+#   host: !secret reolink_nord_ip
+#   username: admin
+#   password: !secret reolink_nord_password
+#   name: reolink_nord #(optional, default Reolink Camera)
+#   stream: sub #main or sub (optional, default main)
+#   protocol: rtmp #rtmp or rtsp (optional, default rtmp)
+#   channel: 0 #NVR camera channel (optional, default 0)
+#   scan_interval: 30 #5 (optional, default 30s)
+
+binary_sensor:
+- platform: template
+  sensors:
+    motion_reolink_sud:
+      friendly_name: Camera Sud
+      device_class: motion
+      entity_id: camera.sud
+      value_template: "{{ is_state('camera.sud', 'motion') }}"
+      delay_off: 
+          seconds: 30
+- platform: template
+  sensors:
+    motion_reolink_nord:
+      friendly_name: Camera Nord
+      device_class: motion
+      entity_id: camera.nord
+      value_template: "{{ is_state('camera.nord', 'motion') }}"
+      delay_off: 
+          seconds: 30
+
+switch:
+  - platform: template
+    switches:
+      camera_reolink_sud_email:
+        value_template: "{{ is_state_attr('camera.sud', 'email_enabled', true) }}"
+        turn_on:
+          service: camera.enable_email
+          data:
+            entity_id: camera.sud
+        turn_off:
+          service: camera.disable_email
+          data:
+            entity_id: camera.sud
+        icon_template: >-
+          {% if is_state_attr('camera.sud', 'email_enabled', true) %}
+            mdi:email
+          {% else %}
+            mdi:email-outline
+          {% endif %}
+            
+      camera_reolink_sud_ftp:
+        value_template: "{{ is_state_attr('camera.sud', 'ftp_enabled', true) }}"
+        turn_on:
+          service: camera.enable_ftp
+          data:
+            entity_id: camera.sud
+        turn_off:
+          service: camera.disable_ftp
+          data:
+            entity_id: camera.sud
+        icon_template: >-
+          {% if is_state_attr('camera.sud', 'ftp_enabled', true) %}
+            mdi:filmstrip
+          {% else %}
+            mdi:filmstrip-off
+          {% endif %}
+          
+      camera_reolink_sud_ir_lights:
+        value_template: "{{ is_state_attr('camera.sud', 'ir_lights_enabled', true) }}"
+        turn_on:
+          service: camera.enable_ir_lights
+          data:
+            entity_id: camera.sud
+        turn_off:
+          service: camera.disable_ir_lights
+          data:
+            entity_id: camera.sud
+        icon_template: >-
+          {% if is_state_attr('camera.sud', 'ir_lights_enabled', true) %}
+            mdi:flashlight
+          {% else %}
+            mdi:flashlight-off
+          {% endif %}
+
+      camera_reolink_sud_motion_detection:
+        value_template: "{{ is_state_attr('camera.sud', 'motion_detection_enabled', true) }}"
+        turn_on:
+          service: camera.enable_motion_detection
+          data:
+            entity_id: camera.sud
+        turn_off:
+          service: camera.disable_motion_detection
+          data:
+            entity_id: camera.sud
+        icon_template: >-
+          {% if is_state_attr('camera.sud', 'motion_detection_enabled', true) %}
+            mdi:motion-sensor
+          {% else %}
+            mdi:motion-sensor-off
+          {% endif %}
+
+
+
+  - platform: template
+    switches:
+      camera_reolink_nord_email:
+        value_template: "{{ is_state_attr('camera.nord', 'email_enabled', true) }}"
+        turn_on:
+          service: camera.enable_email
+          data:
+            entity_id: camera.nord
+        turn_off:
+          service: camera.disable_email
+          data:
+            entity_id: camera.nord
+        icon_template: >-
+          {% if is_state_attr('camera.nord', 'email_enabled', true) %}
+            mdi:email
+          {% else %}
+            mdi:email-outline
+          {% endif %}
+            
+      camera_reolink_nord_ftp:
+        value_template: "{{ is_state_attr('camera.nord', 'ftp_enabled', true) }}"
+        turn_on:
+          service: camera.enable_ftp
+          data:
+            entity_id: camera.nord
+        turn_off:
+          service: camera.disable_ftp
+          data:
+            entity_id: camera.nord
+        icon_template: >-
+          {% if is_state_attr('camera.nord', 'ftp_enabled', true) %}
+            mdi:filmstrip
+          {% else %}
+            mdi:filmstrip-off
+          {% endif %}
+          
+      camera_reolink_nord_ir_lights:
+        value_template: "{{ is_state_attr('camera.nord', 'ir_lights_enabled', true) }}"
+        turn_on:
+          service: camera.enable_ir_lights
+          data:
+            entity_id: camera.nord
+        turn_off:
+          service: camera.disable_ir_lights
+          data:
+            entity_id: camera.nord
+        icon_template: >-
+          {% if is_state_attr('camera.nord', 'ir_lights_enabled', true) %}
+            mdi:flashlight
+          {% else %}
+            mdi:flashlight-off
+          {% endif %}
+
+      camera_reolink_nord_motion_detection:
+        value_template: "{{ is_state_attr('camera.nord', 'motion_detection_enabled', true) }}"
+        turn_on:
+          service: camera.enable_motion_detection
+          data:
+            entity_id: camera.nord
+        turn_off:
+          service: camera.disable_motion_detection
+          data:
+            entity_id: camera.nord
+        icon_template: >-
+          {% if is_state_attr('camera.nord', 'motion_detection_enabled', true) %}
+            mdi:motion-sensor
+          {% else %}
+            mdi:motion-sensor-off
+          {% endif %}
