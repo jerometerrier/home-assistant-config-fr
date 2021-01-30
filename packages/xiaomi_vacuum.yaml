@@ -139,5 +139,5 @@ camera:
       - walls
       - zones
     scan_interval:
-      seconds: 10
+      seconds: 60
     auto_update: true
