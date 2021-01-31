@@ -1,11 +1,9 @@
-
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 # http:
 #   base_url: example.duckdns.org:8123
-
 
 logger:
   default: info
@@ -17,8 +15,7 @@ logger:
 recorder:
   auto_purge: true
   purge_keep_days: 10
-    
-    
+
 http:
   use_x_forwarded_for: True
   trusted_proxies: !secret IP_bastion
@@ -30,7 +27,7 @@ homeassistant:
 # Text to speech
 tts:
   - platform: google_translate
-    language: 'fr'
+    language: "fr"
     cache: true
     cache_dir: /tmp/tts
     time_memory: 300
@@ -42,15 +39,14 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 sensor: !include sensors.yaml
 
-
 #zwave:
-  #usb_path: '/dev/ttyAMA0'
-  #device_config: !include zwave_device_config.yaml
+#usb_path: '/dev/ttyAMA0'
+#device_config: !include zwave_device_config.yaml
 
 mysensors:
   gateways:
-    - device: '/dev/ttyACM0'
-      persistence_file: 'mysensors.json'
+    - device: "/dev/ttyACM1"
+      persistence_file: "mysensors.json"
       baud_rate: 115200
       nodes:
         2:
@@ -62,7 +58,7 @@ mysensors:
         5:
           name: "Garage"
         6:
-          name: 'Pos_Portail'
+          name: "Pos_Portail"
   optimistic: false
   persistence: true
   retain: true
@@ -118,15 +114,12 @@ media_player:
     apps:
       com.netflix.ninja: "Netflix"
       tv.molotov.app: "Molotov"
-      
 
 vacuum:
   - platform: xiaomi_miio
     host: !secret IP_xiaomi_miio
     token: !secret xiaomi_vacuum_token
     name: Aspirateur_Robot
-
-
 
 xiaomi_aqara:
   discovery_retry: 5
@@ -136,7 +129,7 @@ xiaomi_aqara:
 spotify:
   client_id: !secret spotify_client_id
   client_secret: !secret spotify_client_secret
-  
+
 octoprint:
   - host: !secret IP_octoprint
     port: 5000
@@ -145,11 +138,11 @@ octoprint:
     number_of_tools: 1
     sensors:
       monitored_conditions:
-        - 'Current State'
-        - 'Temperatures'
-        - 'Job Percentage'
-        - 'Time Elapsed'
-        - 'Time Remaining'
+        - "Current State"
+        - "Temperatures"
+        - "Job Percentage"
+        - "Time Elapsed"
+        - "Time Remaining"
     #binary_sensors:
     #  monitored_conditions:
     #    - 'Printing'
@@ -160,7 +153,7 @@ telegram_bot:
     allowed_chat_ids:
       - !secret telegram_jerome_id
       - !secret telegram_elise_id
-      
+
 notify:
   - name: telegram_jerome
     platform: telegram
@@ -181,26 +174,26 @@ huawei_lte:
 tplink_lte:
   - host: !secret TPLinkURL
     password: !secret TPlinkPassword
-    
+
 #android_ip_webcam:
-  #- host: !secret android_lg_g2
-  #  port: 8000
-  #  name: android_lg_g2
-  #  sensors:
-  #    - battery_level
-  #    - battery_temp
-  #    - battery_voltage
-  #    - light
-  #    - motion
-  #    - proximity
-  #  switches:
-  #    - ffc
-  #    - night_vision
-  #    - focus
-  #    - torch
-  #- host: !secret android_htc
-  #  port: 8080
-  #  name: android_htc
+#- host: !secret android_lg_g2
+#  port: 8000
+#  name: android_lg_g2
+#  sensors:
+#    - battery_level
+#    - battery_temp
+#    - battery_voltage
+#    - light
+#    - motion
+#    - proximity
+#  switches:
+#    - ffc
+#    - night_vision
+#    - focus
+#    - torch
+#- host: !secret android_htc
+#  port: 8080
+#  name: android_htc
 
 influxdb:
   host: a0d7b954-influxdb
@@ -210,20 +203,18 @@ influxdb:
   password: !secret influxdb_password
   max_retries: 3
   default_measurement: state
-
 #panel_iframe:
-  # router:
-  #   title: 'Octoprint'
-  #   url: 'http://192.168.1.***:5000'
-  #   icon: 'mdi:printer-3d'
-    
+# router:
+#   title: 'Octoprint'
+#   url: 'http://192.168.1.***:5000'
+#   icon: 'mdi:printer-3d'
+
 # pi_hole:
 #   - host: !secret pihole_hebergnity_ip
 #     name: PiHole Hebergnity
 #   - host: !secret pihole_ip
 #     name: PiHole
 #     api_key: !secret pihole_api
-
 
 #image_processing:
 #  - platform: opencv
