@@ -291,13 +291,13 @@
   - delay: '3'
   - service: media_player.play_media
     data:
-      media_content_id: https://open.spotify.com/playlist/37i9dQZF1DX0X277P8nU0l?si=JS1uFEs_RVKoSovvhFFO_A
-      media_content_type: playlist
+      media_content_id: https://open.spotify.com/album/2Q9oTK48eb85waX1fFJsvj
+      media_content_type: album
     entity_id: media_player.spotify_jerometerrier
   - service: media_player.play_media
     data:
-      media_content_id: https://open.spotify.com/playlist/37i9dQZF1DX0X277P8nU0l?si=JS1uFEs_RVKoSovvhFFO_A
-      media_content_type: playlist
+      media_content_id: https://open.spotify.com/album/2Q9oTK48eb85waX1fFJsvj
+      media_content_type: album
     entity_id: media_player.spotify_jerometerrier
   mode: single
 - id: '1606222415690'
