@@ -1,41 +1,28 @@
-'1590126423860':
-  alias: Aspirateur_Reset_Carte
-  sequence:
-  - data: {}
-    entity_id: vacuum.aspirateur_robot
-    service: vacuum.start
-  - delay: 00:05
-  - data: {}
-    entity_id: vacuum.aspirateur_robot
-    service: vacuum.stop
-  - data: {}
-    entity_id: vacuum.aspirateur_robot
-    service: vacuum.return_to_base
-'1590351094817':
+"1590351094817":
   alias: Desactiver Pi_Hole 1min
   sequence:
-  - data:
-      duration: 00:01:00
-      name: PiHole
-    service: pi_hole.disable
+    - data:
+        duration: 00:01:00
+        name: PiHole
+      service: pi_hole.disable
 flash_light:
   mode: restart
   sequence:
-  - service: light.turn_on
-    data_template:    
-      entity_id: light.{{ light }}
-      brightness: '{{ brightness }}'
-      color_name: '{{ color }}'
-  - repeat:
-      count: '{{ count|int * 2 - 1 }}'
-      sequence:
-      - delay: '{{ delay }}'
-      - data_template:
-          entity_id: light.{{ light }}
-        service: homeassistant.toggle
-  - service: light.turn_off
-    data_template:    
-      entity_id: light.{{ light }}
+    - service: light.turn_on
+      data_template:
+        entity_id: light.{{ light }}
+        brightness: "{{ brightness }}"
+        color_name: "{{ color }}"
+    - repeat:
+        count: "{{ count|int * 2 - 1 }}"
+        sequence:
+          - delay: "{{ delay }}"
+          - data_template:
+              entity_id: light.{{ light }}
+            service: homeassistant.toggle
+    - service: light.turn_off
+      data_template:
+        entity_id: light.{{ light }}
 flash_light_test:
   sequence:
     - service: script.flash_light

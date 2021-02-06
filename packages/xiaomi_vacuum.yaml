@@ -18,6 +18,19 @@ script:
         data_template:
           entity_id: input_number.xiaomi_vacuum_dernier_vidage
           value: "{{state_attr('vacuum.aspirateur_robot', 'total_cleaned_area')}}"
+  "1590126423860":
+    alias: Aspirateur_Reset_Carte
+    sequence:
+      - data: {}
+        entity_id: vacuum.aspirateur_robot
+        service: vacuum.start
+      - delay: 00:05
+      - data: {}
+        entity_id: vacuum.aspirateur_robot
+        service: vacuum.stop
+      - data: {}
+        entity_id: vacuum.aspirateur_robot
+        service: vacuum.return_to_base
 automation:
   - alias: Aspirateur vérification fréquence vidage
     trigger:
