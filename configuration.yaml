@@ -203,7 +203,13 @@ influxdb:
   password: !secret influxdb_password
   max_retries: 3
   default_measurement: state
-#panel_iframe:
+  tags_attributes:
+    - friendly_name
+  exclude:
+    domains:
+      - automation
+
+      #panel_iframe:
 # router:
 #   title: 'Octoprint'
 #   url: 'http://192.168.1.***:5000'
