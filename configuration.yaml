@@ -45,7 +45,7 @@ sensor: !include sensors.yaml
 
 mysensors:
   gateways:
-    - device: "/dev/ttyACM1"
+    - device: "/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_55731323136351B0E1F0-if00"
       persistence_file: "mysensors.json"
       baud_rate: 115200
       nodes:
