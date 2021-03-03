@@ -1,6 +1,6 @@
-  volets_roulants:
-    name: volets_roulants
-    icon: mdi:window-closed-variant
-    entities:
-      - cover.fibaro_system_fgrm222_roller_shutter_controller_2_level
-      - cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2
+volets_roulants:
+  name: volets_roulants
+  icon: mdi:window-closed-variant
+  entities:
+    - cover.roller_shutter_2_current_value
+    - cover.roller_shutter_2_current_value_2

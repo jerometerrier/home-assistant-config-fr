@@ -2,39 +2,39 @@
   trigger:
     platform: state
     entity_id: binary_sensor.motion_sensor_158d00016c3bc5, binary_sensor.motion_sensor_158d0001a24ee1
-    from: 'off'
-    to: 'on'
+    from: "off"
+    to: "on"
   condition:
     condition: state
     entity_id: sun.sun
     state: below_horizon
   action:
-  - service: light.turn_on
-    entity_id: light.gateway_light_7811dcb06280
-    data:
-      brightness: 80
-      color_name: white
+    - service: light.turn_on
+      entity_id: light.gateway_light_7811dcb06280
+      data:
+        brightness: 80
+        color_name: white
   id: 0724dab5d2f74249ae544ab004f21bc6
 - alias: Extinction gateway si plus de mouvement
   trigger:
     platform: state
     entity_id: binary_sensor.motion_sensor_158d00016c3bc5, binary_sensor.motion_sensor_158d0001a24ee1
-    from: 'on'
-    to: 'off'
+    from: "on"
+    to: "off"
     for:
       minutes: 5
   condition:
     condition: and
     conditions:
-    - condition: state
-      entity_id: binary_sensor.motion_sensor_158d0001a24ee1
-      state: 'off'
-    - condition: state
-      entity_id: binary_sensor.motion_sensor_158d00016c3bc5
-      state: 'off'
+      - condition: state
+        entity_id: binary_sensor.motion_sensor_158d0001a24ee1
+        state: "off"
+      - condition: state
+        entity_id: binary_sensor.motion_sensor_158d00016c3bc5
+        state: "off"
   action:
-  - service: light.turn_off
-    entity_id: light.gateway_light_7811dcb06280
+    - service: light.turn_off
+      entity_id: light.gateway_light_7811dcb06280
   id: e556877a300e409895096798f8928905
 - alias: Ouverture volets automatique
   trigger:
@@ -42,14 +42,14 @@
     event: sunrise
     offset: -00:30:00
   action:
-  - service: cover.set_cover_position
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level
-    data:
-      position: 100
-  - service: cover.set_cover_position
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2
-    data:
-      position: 100
+    - service: cover.set_cover_position
+      entity_id: cover.roller_shutter_2_current_value
+      data:
+        position: 100
+    - service: cover.set_cover_position
+      entity_id: cover.roller_shutter_2_current_value_2
+      data:
+        position: 100
   id: c9cdd4a0ab84454585b7e0d7dbeacaef
 - alias: Fermeture volets automatique
   trigger:
@@ -57,270 +57,276 @@
     event: sunset
     offset: +01:00:00
   action:
-  - service: cover.set_cover_position
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level
-    data:
-      position: 0
-  - service: cover.set_cover_position
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2
-    data:
-      position: 0
+    - service: cover.set_cover_position
+      entity_id: cover.roller_shutter_2_current_value
+      data:
+        position: 0
+    - service: cover.set_cover_position
+      entity_id: cover.roller_shutter_2_current_value_2
+      data:
+        position: 0
   id: 8e6cd5d42a3c45db9ce07bd2934bfc68
-- id: '1582992157831'
+- id: "1582992157831"
   alias: Allumer radiateur de salle de bain
   description: Extinction automatique au bout de 20 minutes
   trigger:
-  - event_data:
-      click_type: single
-      entity_id: binary_sensor.switch_158d0001b86cee
-    event_type: xiaomi_aqara.click
-    platform: event
+    - event_data:
+        click_type: single
+        entity_id: binary_sensor.switch_158d0001b86cee
+      event_type: xiaomi_aqara.click
+      platform: event
   condition: []
   action:
-  - data: {}
-    entity_id: switch.qubino_goap_zmnhadx_flush_1_relay_switch
-    service: switch.turn_on
-  - delay: 00:20:00
-  - data: {}
-    entity_id: switch.qubino_goap_zmnhadx_flush_1_relay_switch
-    service: switch.turn_off
-- id: '1582992234057'
+    - data: {}
+      entity_id: switch.flush_1_relay_current_value
+      service: switch.turn_on
+    - delay: 00:20:00
+    - data: {}
+      entity_id: switch.flush_1_relay_current_value
+      service: switch.turn_off
+- id: "1582992234057"
   alias: Arret radiateur
-  description: ''
+  description: ""
   trigger:
-  - event_data:
-      click_type: double
-      entity_id: binary_sensor.switch_158d0001b86cee
-    event_type: xiaomi_aqara.click
-    platform: event
+    - event_data:
+        click_type: double
+        entity_id: binary_sensor.switch_158d0001b86cee
+      event_type: xiaomi_aqara.click
+      platform: event
   condition: []
   action:
-  - data: {}
-    entity_id: switch.qubino_goap_zmnhadx_flush_1_relay_switch
-    service: switch.turn_off
+    - data: {}
+      entity_id: switch.flush_1_relay_current_value
+      service: switch.turn_off
 - id: 199ec05181b24853acb8eb697e6d306c
   alias: Aspirateur quotidien
   description: Lancement de l'aspirateur tous les jours à 8h
   trigger:
-  - platform: time
-    at: 08:50:00
+    - platform: time
+      at: 08:50:00
   action:
-  - service: xiaomi_miio.vacuum_clean_zone
-    entity_id: vacuum.aspirateur_robot
-    data:
-      zone:
-      - - 16500
-        - 19356
-        - 20565
-        - 24000
-      repeats: 1
+    - service: xiaomi_miio.vacuum_clean_zone
+      entity_id: vacuum.aspirateur_robot
+      data:
+        zone:
+          - - 16500
+            - 19356
+            - 20565
+            - 24000
+        repeats: 1
   mode: single
 - id: 9dd9b5243b3447518e42ed5fc5ad8b37
   alias: Update notification
   trigger:
-  - entity_id: binary_sensor.updater
-    from: 'off'
-    platform: state
-    to: 'on'
+    - entity_id: binary_sensor.updater
+      from: "off"
+      platform: state
+      to: "on"
   action:
-  - data:
-      message: Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version')
-        }} is now available.
-      target: !secret telegram_jerome_id
-      title: New Home Assistant Release
-    service: telegram_bot.send_message
-- id: '1585324648146'
+    - data:
+        message:
+          Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version')
+          }} is now available.
+        target: !secret telegram_jerome_id
+        title: New Home Assistant Release
+      service: telegram_bot.send_message
+- id: "1585324648146"
   alias: Fin impressions
-  description: ''
+  description: ""
   trigger:
-  - above: 99.5
-    entity_id: sensor.dagoma_discovery_200_job_percentage
-    platform: numeric_state
+    - above: 99.5
+      entity_id: sensor.dagoma_discovery_200_job_percentage
+      platform: numeric_state
   condition: []
   action:
-  - data:
-      message: 'Durée d''impression : {{(states(''sensor.dagoma_discovery_200_time_elapsed'')|
-        int / 60) | round(0)}} minutes'
-      target: !secret telegram_jerome_id
-      title: Impression terminée
-    service: telegram_bot.send_message
+    - data:
+        message:
+          "Durée d'impression : {{(states('sensor.dagoma_discovery_200_time_elapsed')|
+          int / 60) | round(0)}} minutes"
+        target: !secret telegram_jerome_id
+        title: Impression terminée
+      service: telegram_bot.send_message
 - alias: Impression bientot terminée
-  description: ''
+  description: ""
   trigger:
-  - above: 95
-    entity_id: sensor.dagoma_discovery_200_job_percentage
-    platform: numeric_state
+    - above: 95
+      entity_id: sensor.dagoma_discovery_200_job_percentage
+      platform: numeric_state
   condition: []
   action:
-  - data:
-      message: '{{(states(''sensor.dagoma_discovery_200_job_percentage''))}} %'
-      target: !secret telegram_jerome_id
-      title: Impression bientôt terminée
-    service: telegram_bot.send_message
+    - data:
+        message: "{{(states('sensor.dagoma_discovery_200_job_percentage'))}} %"
+        target: !secret telegram_jerome_id
+        title: Impression bientôt terminée
+      service: telegram_bot.send_message
   id: 9871467314474875b9fa67f990e4ed42
 - id: 0d6a6992275349659c6ab8aeb00890d1
   alias: Semis température
-  description: ''
+  description: ""
   trigger:
-  - minutes: /15
-    platform: time_pattern
+    - minutes: /15
+      platform: time_pattern
   condition:
-  - condition: or
-    conditions:
-    - condition: template
-      value_template: '{{states("sensor.temperature_158d000322ba55") | float < states("sensor.temperature_158d0001b956ea")|float
-        -5 }}'
-    - above: '30'
-      condition: numeric_state
-      entity_id: sensor.temperature_158d000322ba55
+    - condition: or
+      conditions:
+        - condition: template
+          value_template:
+            '{{states("sensor.temperature_158d000322ba55") | float < states("sensor.temperature_158d0001b956ea")|float
+            -5 }}'
+        - above: "30"
+          condition: numeric_state
+          entity_id: sensor.temperature_158d000322ba55
   action:
-  - data:
-      message: Attention, la température du semis est de {{states("sensor.temperature_158d000322ba55")}}°
-      target:
-      - !secret telegram_jerome_id
-      - !secret telegram_elise_id
-    service: telegram_bot.send_message
-- id: '1586675888637'
+    - data:
+        message: Attention, la température du semis est de {{states("sensor.temperature_158d000322ba55")}}°
+        target:
+          - !secret telegram_jerome_id
+          - !secret telegram_elise_id
+      service: telegram_bot.send_message
+- id: "1586675888637"
   alias: Test Time Trigger
-  description: ''
+  description: ""
   trigger:
-  - minutes: /2
-    platform: time_pattern
+    - minutes: /2
+      platform: time_pattern
   condition: []
   action:
-  - data:
-      message: Test time trigger
-      target: !secret telegram_jerome_id
-    service: telegram_bot.send_message
-- id: '1596583718241'
+    - data:
+        message: Test time trigger
+        target: !secret telegram_jerome_id
+      service: telegram_bot.send_message
+- id: "1596583718241"
   alias: Test motion
-  description: ''
+  description: ""
   trigger:
-  - entity_id: sensor.test_camera_motion
-    platform: state
-    to: MOTION
+    - entity_id: sensor.test_camera_motion
+      platform: state
+      to: MOTION
   condition: []
   action:
-  - data:
-      caption: Ca bouge dans le jardin, non je déconne
-      disable_notification: true
-      target: !secret telegram_jerome_id
-      timeout: 1000
-      url: !secret reolink_sud_snap
-      verify_ssl: false
-    service: telegram_bot.send_photo
+    - data:
+        caption: Ca bouge dans le jardin, non je déconne
+        disable_notification: true
+        target: !secret telegram_jerome_id
+        timeout: 1000
+        url: !secret reolink_sud_snap
+        verify_ssl: false
+      service: telegram_bot.send_photo
   mode: single
-- id: '1596708963541'
+- id: "1596708963541"
   alias: Ouverture volets absence
   trigger:
-  - at: '10:00:00'
-    platform: time
+    - at: "10:00:00"
+      platform: time
   action:
-  - data:
-      position: 14
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level
-    service: cover.set_cover_position
-  - data:
-      position: 14
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2
-    service: cover.set_cover_position
+    - data:
+        position: 14
+      entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level
+      service: cover.set_cover_position
+    - data:
+        position: 14
+      entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2
+      service: cover.set_cover_position
   mode: single
-- id: '1598278817627'
+- id: "1598278817627"
   alias: Verif_soir_fermeture_garage
-  description: ''
+  description: ""
   trigger:
-  - at: '22:00:00'
-    platform: time
+    - at: "22:00:00"
+      platform: time
   condition:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id: input_select.mode
-      state: Présent
-    - condition: state
-      entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
-      state: Ouvert
+    - condition: and
+      conditions:
+        - condition: state
+          entity_id: input_select.mode
+          state: Présent
+        - condition: state
+          entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
+          state: Ouvert
   action:
-  - data:
-      message: Porte de garage ouverte
-      title: Attention
-    service: notify.notify
+    - data:
+        message: Porte de garage ouverte
+        title: Attention
+      service: notify.notify
   mode: single
-- id: '1598992646447'
+- id: "1598992646447"
   alias: Sauvegarde_hebdo
-  description: ''
+  description: ""
   trigger:
-  - at: 02:00:00
-    platform: time
+    - at: 02:00:00
+      platform: time
   condition:
-  - condition: time
-    weekday:
-    - sat
+    - condition: time
+      weekday:
+        - sat
   action:
     data_template:
       name: Hassio_full_({{now().strftime('%d.%m.%y')}})
     service: hassio.snapshot_full
   mode: single
-- id: '1603138607659'
+- id: "1603138607659"
   alias: Playlist Matinale Louis
-  description: ''
+  description: ""
   trigger:
-  - platform: event
-    event_type: xiaomi_aqara.click
-    event_data:
-      entity_id: binary_sensor.switch_158d0001b76828
-      click_type: single
+    - platform: event
+      event_type: xiaomi_aqara.click
+      event_data:
+        entity_id: binary_sensor.switch_158d0001b76828
+        click_type: single
   condition: []
   action:
-  - service: media_player.turn_on
-    data: {}
-    entity_id: media_player.htr_4069_db8ef2_main
-  - delay: '8'
-  - service: media_player.volume_set
-    data:
-      volume_level: 0.3
-    entity_id: media_player.htr_4069_db8ef2_main
-  - service: media_player.select_source
-    data:
-      source: spotify
-    entity_id: media_player.htr_4069_db8ef2_main
-  - service: media_player.select_source
-    data:
-      source: HTR-4069 DB8EF2
-    entity_id: media_player.spotify_jerometerrier
-  - delay: '3'
-  - service: media_player.play_media
-    data:
-      media_content_id: https://open.spotify.com/album/2Q9oTK48eb85waX1fFJsvj
-      media_content_type: album
-    entity_id: media_player.spotify_jerometerrier
-  - service: media_player.play_media
-    data:
-      media_content_id: https://open.spotify.com/album/2Q9oTK48eb85waX1fFJsvj
-      media_content_type: album
-    entity_id: media_player.spotify_jerometerrier
+    - service: media_player.turn_on
+      data: {}
+      entity_id: media_player.htr_4069_db8ef2_main
+    - delay: "8"
+    - service: media_player.volume_set
+      data:
+        volume_level: 0.3
+      entity_id: media_player.htr_4069_db8ef2_main
+    - service: media_player.select_source
+      data:
+        source: spotify
+      entity_id: media_player.htr_4069_db8ef2_main
+    - service: media_player.select_source
+      data:
+        source: HTR-4069 DB8EF2
+      entity_id: media_player.spotify_jerometerrier
+    - delay: "3"
+    - service: media_player.play_media
+      data:
+        media_content_id: https://open.spotify.com/album/2Q9oTK48eb85waX1fFJsvj
+        media_content_type: album
+      entity_id: media_player.spotify_jerometerrier
+    - service: media_player.play_media
+      data:
+        media_content_id: https://open.spotify.com/album/2Q9oTK48eb85waX1fFJsvj
+        media_content_type: album
+      entity_id: media_player.spotify_jerometerrier
   mode: single
-- id: '1606222415690'
+- id: "1606222415690"
   alias: Camera_Snapshots
-  description: ''
+  description: ""
   trigger:
-  - platform: time_pattern
-    minutes: /5
+    - platform: time_pattern
+      minutes: /5
   condition: []
   action:
-  - service: camera.snapshot
-    data:
-      filename: /config/www/cam_captures/{{ now ().year }}{{ now ().month }}{{ now
-        ().day }}{{ now ().hour }}{{ now ().minute }}_interieur.jpg
-    entity_id: camera.camera_interieure_profile000_mainstream
-  - service: camera.snapshot
-    data:
-      filename: /config/www/cam_captures/{{ now ().year }}{{ now ().month }}{{ now
-        ().day }}{{ now ().hour }}{{ now ().minute }}_nord.jpg
-    entity_id: camera.nord
-  - service: camera.snapshot
-    data:
-      filename: /config/www/cam_captures/{{ now ().year }}{{ now ().month }}{{ now
-        ().day }}{{ now ().hour }}{{ now ().minute }}_sud.jpg
-    entity_id: camera.sud
+    - service: camera.snapshot
+      data:
+        filename:
+          /config/www/cam_captures/{{ now ().year }}{{ now ().month }}{{ now
+          ().day }}{{ now ().hour }}{{ now ().minute }}_interieur.jpg
+      entity_id: camera.camera_interieure_profile000_mainstream
+    - service: camera.snapshot
+      data:
+        filename:
+          /config/www/cam_captures/{{ now ().year }}{{ now ().month }}{{ now
+          ().day }}{{ now ().hour }}{{ now ().minute }}_nord.jpg
+      entity_id: camera.nord
+    - service: camera.snapshot
+      data:
+        filename:
+          /config/www/cam_captures/{{ now ().year }}{{ now ().month }}{{ now
+          ().day }}{{ now ().hour }}{{ now ().minute }}_sud.jpg
+      entity_id: camera.sud
   mode: single

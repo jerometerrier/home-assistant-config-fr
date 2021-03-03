@@ -68,9 +68,9 @@ binary_sensor.door_window_sensor_158d0001dad2f6:
   friendly_name: Fenêtre Chambre Sofia
 light.gateway_light_7811dcb06280:
   friendly_name: Lampe Gateway
-cover.fibaro_system_fgrm222_roller_shutter_controller_2_level:
+cover.roller_shutter_2_current_value:
   friendly_name: Volet Cuisine
-cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2:
+cover.roller_shutter_2_current_value_2:
   friendly_name: Volet Salon
 switch.qubino_goap_zmnhadx_flush_1_relay_switch:
   friendly_name: Radiateur Salle de bain
