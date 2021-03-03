@@ -72,7 +72,7 @@ cover.roller_shutter_2_current_value:
   friendly_name: Volet Cuisine
 cover.roller_shutter_2_current_value_2:
   friendly_name: Volet Salon
-switch.qubino_goap_zmnhadx_flush_1_relay_switch:
+switch.flush_1_relay_current_value:
   friendly_name: Radiateur Salle de bain
 binary_sensor.switch_158d0001b76828:
   friendly_name: Playlist Louis
