@@ -2,10 +2,10 @@ sensor:
   - platform: rest
     name: Pollens
     resource: https://www.pollens.fr/risks/thea/counties/71
-    json_attributes: 
+    json_attributes:
       - risks
-    value_template: '{{ value_json.riskLevel }}'
-    # Request every 12 hours 
+    value_template: "{{ value_json.riskLevel }}"
+    # Request every 12 hours
     scan_interval: 43200
   - platform: template
     sensors:
@@ -64,67 +64,144 @@ sensor:
         value_template: "{{state_attr('sensor.pollens', 'risks')[18].level}}"
         friendly_name: Cyprès
 
-
 timer:
   gouttes:
-    duration: '00:02:00'
+    duration: "00:02:00"
 
+##################################
+### Version application home assistant
+##################################
 
 automation:
-  - alias : 'GOUTTES_activation_automation_gouttes'
+  - alias: "GOUTTES_activation_automation_gouttes"
     trigger:
       - platform: time_pattern
         hours: "6"
         minutes: "0"
-    action: 
+    action:
       - service: automation.turn_on
         entity_id: automation.gouttes_message_gouttes_toutes_les_5_minutes
-  - alias: 'GOUTTES_Message_gouttes_toutes_les_5_minutes'
+  - alias: "GOUTTES_Message_gouttes_toutes_les_5_minutes"
     trigger:
       - platform: time_pattern
         minutes: /5
     action:
-      - service: telegram_bot.send_message
+      - service: notify.ALL_app_hass
         data:
-          target: 
-            - !secret telegram_jerome_id
-            - !secret telegram_elise_id
-          message: "N'oublie pas de prendre tes gouttes"
-          inline_keyboard:
-            - "Je prends mes gouttes:/ok_gouttes"
+          message: |
+            Bonjour Elise,
+            <br>
+            Il fait actuellement <b>{{state_attr('weather.mellecey','temperature')}} °C</b>
+            <br>
+            Il fera <b>{{state_attr('weather.mellecey','forecast')[0]['temperature']}} °C</b>
+            <br>
+            Allergies :
+              <br>
+              Peuplier : {{states('sensor.pollen_peuplier')}}/5
+              <br>
+              Olivier : {{states('sensor.pollen_olivier')}}/5
+              <br>
+            N'oublie pas de prendre tes gouttes
+            <br>
+            Bonne journée
 
-  - alias: 'GOUTTES_Acquittement prises de gouttes + Lancement Chrono'
+          data:
+            importance: high
+            vibrationPattern: "100, 1000, 100, 1000, 100"
+            channel: allergie
+            tag: allergie
+            sticky: true
+            persistent: true
+            actions:
+              - title: "Je prends mes gouttes"
+                action: allergie_timer
+
+  - alias: "GOUTTES_Acquittement prises de gouttes + Lancement Chrono"
     trigger:
-      platform: event
-      event_type: telegram_callback
-      event_data:
-        command: '/ok_gouttes'
+      - platform: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: allergie_timer
     action:
-      - service: telegram_bot.edit_replymarkup
+      - service: notify.ALL_app_hass
         data:
-          message_id: 'last'
-          chat_id: '{{ trigger.event.data.chat_id }}'
-          inline_keyboard: []
-      - service: telegram_bot.send_message
-        data:
-          target: 
-            - !secret telegram_jerome_id
-            - !secret telegram_elise_id
           message: "Lancement du timer : 2min"
+          data:
+            tag: allergie
       - service: timer.start
         entity_id: timer.gouttes
       - service: automation.turn_off
         entity_id: automation.GOUTTES_Message_gouttes_toutes_les_5_minutes
-  - alias: 'GOUTTES_Fin chrono gouttes'
+  - alias: "GOUTTES_Fin chrono gouttes"
     trigger:
-    - platform: event
-      event_type: timer.finished
-      event_data:
-        entity_id: timer.gouttes
+      - platform: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.gouttes
     action:
-      - service: telegram_bot.send_message
+      - service: notify.ALL_app_hass
         data:
-          target: 
-            - !secret telegram_jerome_id
-            - !secret telegram_elise_id
-          message: 'Temps écoulé'
+          message: "Temps écoulé"
+          data:
+            tag: allergie
+##################################
+### Version telegram
+##################################
+# automation:
+#   - alias : 'GOUTTES_activation_automation_gouttes'
+#     trigger:
+#       - platform: time_pattern
+#         hours: "6"
+#         minutes: "0"
+#     action:
+#       - service: automation.turn_on
+#         entity_id: automation.gouttes_message_gouttes_toutes_les_5_minutes
+#   - alias: 'GOUTTES_Message_gouttes_toutes_les_5_minutes'
+#     trigger:
+#       - platform: time_pattern
+#         minutes: /5
+#     action:
+#       - service: telegram_bot.send_message
+#         data:
+#           target:
+#             - !secret telegram_jerome_id
+#             - !secret telegram_elise_id
+#           message: "N'oublie pas de prendre tes gouttes"
+#           inline_keyboard:
+#             - "Je prends mes gouttes:/ok_gouttes"
+
+#   - alias: 'GOUTTES_Acquittement prises de gouttes + Lancement Chrono'
+#     trigger:
+#       platform: event
+#       event_type: telegram_callback
+#       event_data:
+#         command: '/ok_gouttes'
+#     action:
+#       - service: telegram_bot.edit_replymarkup
+#         data:
+#           message_id: 'last'
+#           chat_id: '{{ trigger.event.data.chat_id }}'
+#           inline_keyboard: []
+#       - service: telegram_bot.send_message
+#         data:
+#           target:
+#             - !secret telegram_jerome_id
+#             - !secret telegram_elise_id
+#           message: "Lancement du timer : 2min"
+#       - service: timer.start
+#         entity_id: timer.gouttes
+#       - service: automation.turn_off
+#         entity_id: automation.GOUTTES_Message_gouttes_toutes_les_5_minutes
+#   - alias: 'GOUTTES_Fin chrono gouttes'
+#     trigger:
+#     - platform: event
+#       event_type: timer.finished
+#       event_data:
+#         entity_id: timer.gouttes
+#     action:
+#       - service: telegram_bot.send_message
+#         data:
+#           target:
+#             - !secret telegram_jerome_id
+#             - !secret telegram_elise_id
+#           message: 'Temps écoulé'
