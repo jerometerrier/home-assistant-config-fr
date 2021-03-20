@@ -130,23 +130,23 @@ spotify:
   client_id: !secret spotify_client_id
   client_secret: !secret spotify_client_secret
 
-octoprint:
-  - host: !secret IP_octoprint
-    port: 5000
-    api_key: !secret octoprint_api_key
-    name: Dagoma Discovery 200
-    number_of_tools: 1
-    sensors:
-      monitored_conditions:
-        - "Current State"
-        - "Temperatures"
-        - "Job Percentage"
-        - "Time Elapsed"
-        - "Time Remaining"
-    #binary_sensors:
-    #  monitored_conditions:
-    #    - 'Printing'
-    #    - 'Printing Error'
+# octoprint:
+#   - host: !secret IP_octoprint
+#     port: 5000
+#     api_key: !secret octoprint_api_key
+#     name: Dagoma Discovery 200
+#     number_of_tools: 1
+#     sensors:
+#       monitored_conditions:
+#         - "Current State"
+#         - "Temperatures"
+#         - "Job Percentage"
+#         - "Time Elapsed"
+#         - "Time Remaining"
+#     #binary_sensors:
+#     #  monitored_conditions:
+#     #    - 'Printing'
+#     #    - 'Printing Error'
 telegram_bot:
   - platform: polling
     api_key: !secret telegram_api_key
