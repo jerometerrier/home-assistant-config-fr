@@ -228,27 +228,6 @@
       entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2
       service: cover.set_cover_position
   mode: single
-- id: "1598278817627"
-  alias: Verif_soir_fermeture_garage
-  description: ""
-  trigger:
-    - at: "22:00:00"
-      platform: time
-  condition:
-    - condition: and
-      conditions:
-        - condition: state
-          entity_id: input_select.mode
-          state: Présent
-        - condition: state
-          entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
-          state: Ouvert
-  action:
-    - data:
-        message: Porte de garage ouverte
-        title: Attention
-      service: notify.notify
-  mode: single
 - id: "1598992646447"
   alias: Sauvegarde_hebdo
   description: ""
