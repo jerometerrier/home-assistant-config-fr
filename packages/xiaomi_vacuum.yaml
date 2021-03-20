@@ -178,6 +178,9 @@ sensor:
       vacuum_fan_speed:
         value_template: "{{ states.vacuum.aspirateur_robot.attributes.fan_speed }}"
         unit_of_measurement: "%"
+      vacuum_remplissage_bac:
+        value_template: "{{((state_attr('vacuum.aspirateur_robot', 'total_cleaned_area') | float - states('input_number.xiaomi_vacuum_dernier_vidage') | float)/states('input_number.xiaomi_vacuum_frequence_vidage') | float * 100 )| round(0) }}"
+        unit_of_measurement: "%"
 #      vacuum_last_trash:
 #        value_template: 0
 #        unit_of_measurement: 'h'
