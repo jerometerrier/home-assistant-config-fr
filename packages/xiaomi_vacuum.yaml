@@ -1,4 +1,9 @@
----
+vacuum:
+  - platform: xiaomi_miio
+    host: !secret IP_xiaomi_miio
+    token: !secret xiaomi_vacuum_token
+    name: Aspirateur_Robot
+
 ########################
 ## Gestion aspirateur ##
 ########################

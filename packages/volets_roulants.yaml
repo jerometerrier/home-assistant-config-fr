@@ -1,0 +1,7 @@
+group:
+  volets_roulants:
+    name: volets_roulants
+    icon: mdi:window-closed-variant
+    entities:
+      - cover.roller_shutter_2_current_value
+      - cover.roller_shutter_2_current_value_2
