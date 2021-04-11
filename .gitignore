@@ -7,6 +7,10 @@
 !.gitignore
 !*.md
 !packages
+!blueprints
+!blueprints/**
+
+
 
 # Ignore folders.
 .storage
@@ -22,6 +26,7 @@ known_devices.yaml
 home-assistant_V2.db
 home-assistant.log
 OZW_Log.txt
+
 # SSH keys
 .ssh/
 id_ed25519*
