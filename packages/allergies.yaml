@@ -86,7 +86,7 @@ automation:
       - platform: time_pattern
         minutes: /5
     action:
-      - service: notify.ALL_app_hass
+      - service: notify.mobile_app_redmi_note_9_pro
         data:
           message: |
             Bonjour Elise,
@@ -123,7 +123,7 @@ automation:
         event_data:
           action: allergie_timer
     action:
-      - service: notify.ALL_app_hass
+      - service: notify.mobile_app_redmi_note_9_pro
         data:
           message: "Lancement du timer : 2min"
           data:
@@ -139,7 +139,7 @@ automation:
         event_data:
           entity_id: timer.gouttes
     action:
-      - service: notify.ALL_app_hass
+      - service: notify.mobile_app_redmi_note_9_pro
         data:
           message: "Temps écoulé"
           data:
