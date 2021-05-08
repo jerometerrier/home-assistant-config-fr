@@ -1,0 +1,35 @@
+alert:
+  porte_garage:
+    name: Garage ouvert
+    done_message: Garage fermé
+    entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
+    state: off
+    repeat:
+      - 2
+      - 1
+    can_acknowledge: true
+    skip_first: false
+    notifiers:
+      - ALL_app_hass
+    data:
+      message: "Garage ouvert !"
+      tag: alerte_garage_ouvert
+      sticky: true
+      persistent: true
+      actions:
+        - title: "Fermer le garage"
+          action: fermer_garage
+
+automation:
+  - alias: "Callback to stop alerts for garage door"
+    trigger:
+      - platform: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: fermer_garage
+    action:
+      - service: alert.turn_off
+        target:
+          entity_id: alert.porte_garage
+      - service: switch.turn_off
+        entity_id: switch.arduino_garage

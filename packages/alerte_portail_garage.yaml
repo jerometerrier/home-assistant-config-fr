@@ -1,0 +1,17 @@
+# sensor:
+#   - platform: template
+#     sensors:
+#       portail_reste_ouvert:
+#         value_template: >
+#           {% set maintenant =as_timestamp(now())%}
+#           {% set portail_last_change = as_timestamp(states.switch.arduino_portail_total.last_changed) %}
+#           {{ ((maintenant-portail_last_change)>3600) and not(states('switch.arduino_portail_total')) }}
+#         #device_class: timestamp
+#   - platform: template
+#     sensors:
+#       garage_reste_ouvert:
+#         value_template: >
+#           {% set maintenant =as_timestamp(now())%}
+#           {% set garage_last_change = as_timestamp(states.switch.arduino_garage.last_changed) %}
+#           {{ ((maintenant-garage_last_change)>3600) and not(states('switch.arduino_garage')) }}
+#         #device_class: timestamp
