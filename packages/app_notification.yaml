@@ -1,0 +1,75 @@
+notify:
+  - name: ALL_app_hass
+    platform: group
+    services:
+      - service: mobile_app_sm_g930f
+      - service: mobile_app_redmi_note_9_pro
+
+automation:
+  - alias: "00_Send Notification app all"
+    trigger:
+      - platform: time_pattern
+        hours: "6"
+        minutes: "0"
+    action:
+      - service: notify.ALL_app_hass
+        data:
+          message: "Notification text"
+          data:
+            tag: tag
+            sticky: true
+            persistent: true
+            actions:
+              - title: "Démarrer le timer"
+                action: allergie_timer
+      - wait_for_trigger:
+          - platform: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: allergie_timer
+        timeout: "12:00:00"
+      - service: notify.ALL_app_hass
+        data:
+          message: clear_notification
+          data:
+            tag: tag
+
+  - alias: "00_Send Notification app all clear"
+    trigger:
+      - platform: time_pattern
+        hours: "6"
+        minutes: "0"
+    action:
+      service: notify.ALL_app_hass
+      data:
+        message: clear_notification
+        data:
+          tag: tag
+  - alias: "01_Send Notification app jerome sound"
+    trigger:
+      - platform: time_pattern
+        hours: "6"
+        minutes: "0"
+    action:
+      service: notify.mobile_app_sm_g930f
+      data:
+        title: "Bonjour jérôme, la température aujourd'hui est de 20°C. Il va faire Beau. Bonne journée"
+        message: TTS
+        data:
+          ttl: 0
+          priority: high
+          # channel: alarm_stream
+  - alias: "01_Send Notification app elise sound"
+    trigger:
+      - platform: time_pattern
+        hours: "6"
+        minutes: "54"
+    action:
+      service: notify.mobile_app_redmi_note_9_pro
+      data:
+        title: "Bonjour Elise, n'oublie pas de prendre tes gouttes. Bonne journée"
+        message: TTS
+        data:
+          ttl: 0
+          priority: high
+          channel: alarm_stream
