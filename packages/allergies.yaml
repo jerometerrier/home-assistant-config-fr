@@ -1,3 +1,7 @@
+input_boolean:
+  allergie_lamp_clignote:
+    name: faire clignoter la lampe pendant le timer
+
 sensor:
   - platform: rest
     name: Pollens
@@ -128,6 +132,8 @@ automation:
           message: "Lancement du timer : 2min"
           data:
             tag: allergie
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.allergie_lamp_clignote
       - service: timer.start
         entity_id: timer.gouttes
       - service: automation.turn_off
@@ -139,11 +145,24 @@ automation:
         event_data:
           entity_id: timer.gouttes
     action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.allergie_lamp_clignote
       - service: notify.mobile_app_redmi_note_9_pro
         data:
           message: "Temps écoulé"
           data:
             tag: allergie
+  - alias: flashing lights timer allergie
+    description: "faire clignoter lampe cuisine pendant timer gouttes"
+    use_blueprint:
+      path: jerometerrier/flashing_lights.yaml
+      input:
+        activated: input_boolean.allergie_lamp_clignote
+        delay: 2000
+        color: blue
+        brightness: 100
+        target_lights:
+          entity_id: light.gateway_light_7811dcb06280
 ##################################
 ### Version telegram
 ##################################
