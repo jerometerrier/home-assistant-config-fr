@@ -71,25 +71,22 @@ tplink_lte:
   - host: !secret TPLinkURL
     password: !secret TPlinkPassword
 
-android_ip_webcam:
-  #- host: !secret android_lg_g2
-  #  port: 8000
-  #  name: android_lg_g2
-  #  sensors:
-  #    - battery_level
-  #    - battery_temp
-  #    - battery_voltage
-  #    - light
-  #    - motion
-  #    - proximity
-  #  switches:
-  #    - ffc
-  #    - night_vision
-  #    - focus
-  #    - torch
-  - host: !secret android_htc
-    port: 8080
-    name: android_htc
+# android_ip_webcam:
+#- host: !secret android_lg_g2
+#  port: 8000
+#  name: android_lg_g2
+#  sensors:
+#    - battery_level
+#    - battery_temp
+#    - battery_voltage
+#    - light
+#    - motion
+#    - proximity
+#  switches:
+#    - ffc
+#    - night_vision
+#    - focus
+#    - torch
 
 influxdb:
   host: a0d7b954-influxdb
