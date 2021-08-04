@@ -57,6 +57,13 @@ input_number:
     max: 500
     mode: slider
     step: 10
+  xiaomi_vacuum_map_rotation:
+    name: Rotation carte aspirateur
+    mode: slider
+    initial: 0
+    min: -180
+    max: 180
+    step: 90
 
 camera:
   - platform: xiaomi_cloud_map_extractor
@@ -124,9 +131,9 @@ camera:
     #     color: [125, 20, 213, 127]
     #     font: "FreeSans.ttf"
     #     font_size: 25
-    # map_transformation:
-    #   scale: 2
-    #   rotate: 180
+    map_transformation:
+      #   scale: 2
+      rotate: 90
     #   trim:
     #     top: 10
     #     bottom: 20
@@ -157,6 +164,8 @@ camera:
     scan_interval:
       seconds: 60
     auto_update: true
+    camera_calibration: true
+    # store_map: true
 
 sensor:
   - platform: template
