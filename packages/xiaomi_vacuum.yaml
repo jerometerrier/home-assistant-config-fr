@@ -164,7 +164,6 @@ camera:
     scan_interval:
       seconds: 60
     auto_update: true
-    camera_calibration: true
     # store_map: true
 
 sensor:
