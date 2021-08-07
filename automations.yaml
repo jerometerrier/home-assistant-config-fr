@@ -124,12 +124,14 @@
   action:
   - data:
       position: 14
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level
     service: cover.set_cover_position
+    target:
+      entity_id: cover.roller_shutter_2_current_value
   - data:
       position: 14
-    entity_id: cover.fibaro_system_fgrm222_roller_shutter_controller_2_level_2
     service: cover.set_cover_position
+    target:
+      entity_id: cover.roller_shutter_2_current_value_2
   mode: single
 - id: '1598992646447'
   alias: Sauvegarde_hebdo
@@ -227,3 +229,57 @@
       activated: input_boolean.manual_trigger
       target_lights:
         entity_id: light.gateway_light_7811dcb06280
+- id: '1628279625296'
+  alias: Automatique Snapshot
+  description: ''
+  trigger:
+  - platform: time
+    at:
+    - 07:00
+    - '21:00'
+  condition: []
+  action:
+  - service: camera.snapshot
+    target:
+      entity_id:
+      - camera.camera_interieure_profile000_mainstream
+    data:
+      filename: /config/www/tmp/cam_int.jpg
+  - service: camera.snapshot
+    data:
+      filename: /config/www/tmp/cam_nord.jpg
+    target:
+      entity_id:
+      - camera.nord
+  - service: camera.snapshot
+    data:
+      filename: /config/www/tmp/cam_sud.jpg
+    target:
+      device_id: d86aa3f9e8b7d80ca56b397b68b46820
+  - service: telegram_bot.send_message
+    data:
+      target: 511095978
+      title: '*Daily report : {{ now().strftime("%d/%m/%y - %Hh%M") }}*'
+      message: "Dernier mouvement : \n{{\nas_timestamp(states.group.capteurs_mouvements.last_changed)|\n\
+        timestamp_custom(\"%d/%m/%y - %Hh%Mm%S\") }}\nStatut ouvertures : \n{{states.group.capteurs_ouvertures.state}}\n\
+        depuis\n{{\nas_timestamp(states.group.capteurs_ouvertures.last_changed)|\n\
+        timestamp_custom(\"%d/%m/%y - %Hh%Mm%S\") }}\n"
+  - service: telegram_bot.send_photo
+    data:
+      file: /config/www/tmp/cam_int.jpg
+      verify_ssl: false
+      timeout: 5
+      disable_notification: true
+  - service: telegram_bot.send_photo
+    data:
+      file: /config/www/tmp/cam_nord.jpg
+      verify_ssl: false
+      timeout: 5
+      disable_notification: true
+  - service: telegram_bot.send_photo
+    data:
+      file: /config/www/tmp/cam_sud.jpg
+      verify_ssl: false
+      timeout: 5
+      disable_notification: true
+  mode: single
