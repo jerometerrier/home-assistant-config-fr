@@ -1,3 +1,4 @@
+---
 #-----------------------------------
 # Gestion Systeme Alarme
 #-----------------------------------
@@ -13,7 +14,7 @@ alarm_control_panel:
     armed_home:
       arming_time: 0
       delay_time: 60
-      
+
 group:
   capteurs_ouvertures:
     name: capteurs_ouvertures
@@ -23,19 +24,26 @@ group:
       - binary_sensor.door_window_sensor_158d0001ab6db9 #fenetre chambre louis
       - binary_sensor.door_window_sensor_158d0001dad2f6 # fenêtre chambre sofia
       - binary_sensor.door_window_sensor_158d0001ab235b # fenetre chambre parents
+      - binary_sensor.door_window_sensor_158d00033b73cd #porte service garage
 
   capteurs_mouvements:
     name: capteurs_mouvements
     entities:
       - binary_sensor.motion_sensor_158d00016c3bc5 #détecteur mouvement salon
       - binary_sensor.motion_sensor_158d0001a24ee1 #détecteur mouvement couloir
-      
+homeassistant:
+  customize:
+    group.capteurs_mouvements:
+      device_class: opening
+    group.capteursouvertures:
+      device_class: opening
+
 automation:
-  - alias: 'Send notification when alarm triggered'
+  - alias: "Send notification when alarm triggered"
     trigger:
       - platform: state
         entity_id: alarm_control_panel.home_alarm
-        to: 'triggered'
+        to: "triggered"
     action:
       - service: notify.notify
         data:
@@ -77,11 +85,11 @@ automation:
           verify_ssl: false
 
     mode: single
-  - alias: 'Send notification when alarm Activated'
+  - alias: "Send notification when alarm Activated"
     trigger:
       - platform: state
         entity_id: alarm_control_panel.home_alarm
-        to: 'armed_away'
+        to: "armed_away"
     action:
       - service: notify.notify
         data:
@@ -95,32 +103,32 @@ automation:
           brightness: 100
           delay: 1
 
-  - alias: 'Trigger alarm while armed away'
+  - alias: "Trigger alarm while armed away"
     trigger:
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001ab235b
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001ab6db9
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001b146a0
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001dad2f6
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001b146a0
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.motion_sensor_158d00016c3bc5
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.motion_sensor_158d0001a24ee1
-        to: 'on'
+        to: "on"
 
     condition:
       - condition: state
@@ -130,23 +138,23 @@ automation:
       service: alarm_control_panel.alarm_trigger
       entity_id: alarm_control_panel.home_alarm
 
-  - alias: 'Trigger alarm while armed home'
+  - alias: "Trigger alarm while armed home"
     trigger:
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001ab235b
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001ab37f9
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001ab6db9
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001b146a0
-        to: 'on'
+        to: "on"
       - platform: state
         entity_id: binary_sensor.door_window_sensor_158d0001dad2f6
-        to: 'on'
+        to: "on"
     condition:
       - condition: state
         entity_id: alarm_control_panel.home_alarm
