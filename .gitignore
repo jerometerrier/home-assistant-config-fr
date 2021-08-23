@@ -26,6 +26,7 @@ known_devices.yaml
 home-assistant_V2.db
 home-assistant.log
 OZW_Log.txt
+matrix.yaml
 
 # SSH keys
 .ssh/
