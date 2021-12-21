@@ -129,3 +129,6 @@ influxdb:
 #    classifier:
 #      mom: /config/OpenCV/haarcascade_fullbody.xml
 
+python_script:
+
+wake_on_lan:
