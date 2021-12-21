@@ -3,5 +3,5 @@ group:
     name: volets_roulants
     icon: mdi:window-closed-variant
     entities:
-      - cover.roller_shutter_2_current_value
-      - cover.roller_shutter_2_current_value_2
+      - cover.cuisine_volet_position
+      - cover.salon_volet_position

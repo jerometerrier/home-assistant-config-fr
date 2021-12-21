@@ -43,11 +43,11 @@
     offset: -00:30:00
   action:
   - service: cover.set_cover_position
-    entity_id: cover.roller_shutter_2_current_value
+    entity_id: cover.cuisine_volet_position
     data:
       position: 100
   - service: cover.set_cover_position
-    entity_id: cover.roller_shutter_2_current_value_2
+    entity_id: cover.salon_volet_position
     data:
       position: 100
   id: c9cdd4a0ab84454585b7e0d7dbeacaef
@@ -59,11 +59,11 @@
     offset: +01:00:00
   action:
   - service: cover.set_cover_position
-    entity_id: cover.roller_shutter_2_current_value
+    entity_id: cover.cuisine_volet_position
     data:
       position: 0
   - service: cover.set_cover_position
-    entity_id: cover.roller_shutter_2_current_value_2
+    entity_id: cover.salon_volet_position
     data:
       position: 0
   mode: single
@@ -79,12 +79,15 @@
   condition: []
   action:
   - data: {}
-    entity_id: switch.flush_1_relay_current_value
     service: switch.turn_on
+    target:
+      entity_id: switch.salledebain_radiateur_switch
   - delay: 00:20:00
   - data: {}
-    entity_id: switch.flush_1_relay_current_value
     service: switch.turn_off
+    target:
+      entity_id: switch.salledebain_radiateur_switch
+  mode: single
 - id: '1582992234057'
   alias: Arret radiateur
   description: ''
@@ -126,27 +129,27 @@
       position: 14
     service: cover.set_cover_position
     target:
-      entity_id: cover.roller_shutter_2_current_value
+      entity_id: cover.cuisine_volet_position
   - data:
       position: 14
     service: cover.set_cover_position
     target:
-      entity_id: cover.roller_shutter_2_current_value_2
+      entity_id: cover.salon_volet_position
   mode: single
 - id: '1598992646447'
   alias: Sauvegarde_hebdo
   description: ''
   trigger:
-  - at: 02:00:00
+  - at: 02:00
     platform: time
   condition:
   - condition: time
     weekday:
     - sat
   action:
-    data_template:
+  - data_template:
       name: Hassio_full_({{now().strftime('%d.%m.%y')}})
-    service: hassio.snapshot_full
+    service: hassio.backup_full
   mode: single
 - id: '1603138607659'
   alias: Playlist Matinale Louis
@@ -283,3 +286,25 @@
       timeout: 5
       disable_notification: true
   mode: single
+- id: '1629378172377'
+  alias: Prusa Fin Impression
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.prusa_mini_job_percentage
+    to: '100'
+    attribute: unit_of_measurement
+  condition: []
+  action:
+  - service: notify.mobile_app_sm_g930f
+    data:
+      message: Impression Terminée
+  mode: single
+- id: '1636316260555'
+  alias: Disable vacuum camera update when docked
+  description: ''
+  use_blueprint:
+    path: PiotrMachowski/disable_vacuum_camera_update_when_docked.yaml
+    input:
+      vacuum: vacuum.aspirateur_robot
+      camera: camera.my_vacuum_camera
