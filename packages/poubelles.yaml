@@ -1,29 +1,59 @@
 # Gestion des déchets
 garbage_collection:
   sensors:
-  - name: "Ordures ménagères" # Chaque semaine, le lundi (hors jours fériés)
-    frequency: "weekly"
-    verbose_state: true
-    verbose_format: 'le {date}, dans {days} jours'
-    date_format: '%d/%m'
-    collection_days:
-    - mon
-    # exclude_dates:
-    # - '2019-04-13'
-    # - '2019-06-01'
-    # include_dates:
-    # - '2019-04-14'
-    # - '2019-06-02'
-  - name: "Déchets recyclables" # Toutes les 2 semaines, le mercredi
-    frequency: "even-weeks"
-    verbose_state: true
-    verbose_format: 'le {date}, dans {days} jours'
-    date_format: '%d/%m'
-    collection_days:
-    - wed
-    # exclude_dates:
-    # - '2019-05-21'
-    # - '2019-06-04'
-    # include_dates:
-    # - '2019-05-22'
-    # - '2019-06-05'
+    - name: "Ordures ménagères" # Chaque semaine, le lundi (hors jours fériés)
+      frequency: "weekly"
+      verbose_state: true
+      verbose_format: "le {date}, dans {days} jours"
+      date_format: "%d/%m"
+      collection_days:
+        - mon
+      # exclude_dates:
+      # - '2019-04-13'
+      # - '2019-06-01'
+      # include_dates:
+      # - '2019-04-14'
+      # - '2019-06-02'
+    - name: "Déchets recyclables" # Toutes les 2 semaines, le mercredi
+      frequency: "odd-weeks" # ou even-weeks
+      verbose_state: true
+      verbose_format: "le {date}, dans {days} jours"
+      date_format: "%d/%m"
+      collection_days:
+        - wed
+      include_dates:
+        - "2021-12-29" #avant 2022, poubelle les semaines paire, semaine impaire à partir de 2022
+      # exclude_dates:
+      # - '2019-05-21'
+      # - '2019-06-04'
+      # include_dates:
+      # - '2019-05-22'
+      # - '2019-06-05'
+
+automation:
+  - alias: "Message pour les poubelles"
+    variables:
+      telephone: notify.mobile_app_sm_g930f
+      message: |
+        {% if state_attr("sensor.ordures_menageres", "days") == 0 -%}
+        N'oublie pas de sortir la poubelle noire !
+        {% elif state_attr("sensor.dechets_recyclables", "days") == 1 -%}
+        N'oublie pas de sortir la poubelle jaune !
+        {% endif -%}
+    trigger:
+      - platform: time_pattern
+        hours: "13"
+        minutes: "38"
+    condition: template
+      value_template :"{{ message }}" != ""
+    action:
+      - alias: message
+        service: "{{ telephone }}"
+        data:
+          message: "{{ message }}"
+          data:
+            vibrationPattern: "100, 1000, 100, 1000, 100"
+            channel: poubelle
+            tag: poubelle
+            sticky: false
+            persistent: false
